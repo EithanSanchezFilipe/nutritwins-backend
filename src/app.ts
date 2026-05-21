@@ -43,7 +43,7 @@ export async function buildApp(): Promise<FastifyInstance> {
         return callback(null, true);
       }
 
-      callback(new Error(`Origin ${origin} is not allowed by CORS`));
+      callback(new Error(`Origin ${origin} is not allowed by CORS`), false);
     },
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
