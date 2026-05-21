@@ -1,0 +1,42 @@
+{
+  "name": "a",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "generate:auth": "npx @better-auth/cli@latest generate --config ./src/lib/auth.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@better-auth/expo": "^1.4.18",
+    "@fastify/compress": "^8.3.1",
+    "@fastify/cors": "^11.2.0",
+    "@fastify/helmet": "^13.0.2",
+    "@fastify/multipart": "^9.4.0",
+    "@google/generative-ai": "^0.24.1",
+    "@prisma/adapter-pg": "^7.3.0",
+    "@prisma/client": "^7.3.0",
+    "better-auth": "^1.4.18",
+    "dotenv": "^17.2.3",
+    "expo-network": "^8.0.8",
+    "expo-secure-store": "^15.0.8",
+    "fastify": "^5.7.1",
+    "fastify-type-provider-zod": "^6.1.0",
+    "groq-sdk": "^0.37.0",
+    "pg": "^8.17.2",
+    "prisma": "^7.3.0",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@types/node": "^25.0.9",
+    "@types/pg": "^8.16.0",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.9.3"
+  }
+}

@@ -1,0 +1,18 @@
+enum Gender {
+  MALE = "MALE",
+  FEMALE = "FEMALE",
+}
+
+enum ActivityLevel {
+  SEDENTARY = "SEDENTARY",
+  LIGHTLY_ACTIVE = "LIGHTLY_ACTIVE",
+  MODERATELY_ACTIVE = "MODERATELY_ACTIVE",
+  VERY_ACTIVE = "VERY_ACTIVE",
+}
+
+enum Goal {
+  LOSE_WEIGHT = "LOSE_WEIGHT",
+  MAINTAIN = "MAINTAIN",
+  GAIN_MUSCLE = "GAIN_MUSCLE",
+}
+export { Goal, ActivityLevel, Gender };

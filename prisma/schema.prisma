@@ -1,0 +1,185 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum MealType {
+  BREAKFAST
+  LUNCH
+  DINNER
+  SNACK
+}
+
+model User {
+  id            String     @id
+  name          String
+  email         String     @unique
+  emailVerified Boolean    @default(false)
+  image         String?
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  gender        String?
+  birthDate     DateTime?
+  height        Int?
+  weight        Int?
+  activityLevel String?
+  goal          String?
+  bmr           Int?
+  targetCal     Int?
+  tdee          Int?
+  accounts      Account[]
+  dailyLogs     DailyLog[]
+  recipes       Recipe[]
+  sessions      Session[]
+  metrics       metrics[]
+  allergies     Allergy[]  @relation("UserAllergies")
+
+  @@map("user")
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([identifier])
+  @@map("verification")
+}
+
+model DailyLog {
+  id               String      @id @default(cuid())
+  date             DateTime    @default(now())
+  userId           String
+  targetCalories   Int
+  consumedCalories Int         @default(0)
+  user             User        @relation(fields: [userId], references: [id])
+  entries          FoodEntry[]
+
+  @@map("daily_log")
+  @@unique([userId, date])
+}
+
+model FoodEntry {
+  id          String    @id @default(cuid())
+  dailyLogId  String
+  description String
+  imageUrl    String?
+  mealType    MealType
+  calories    Int
+  protein     Float?
+  carbs       Float?
+  fat         Float?
+  createdAt   DateTime  @default(now())
+  dailyLog    DailyLog @relation(fields: [dailyLogId], references: [id])
+  recipes     Recipe[]
+
+  @@map("food_entry")
+}
+
+model Recipe {
+  id            String        @id @default(cuid())
+  title         String
+  instructions  String
+  isAiGenerated Boolean       @default(false)
+  creatorId     String?
+  foodEntryId   String?
+  ingredients   Ingredients[]
+  creator       User?         @relation(fields: [creatorId], references: [id])
+  foodEntry     FoodEntry?    @relation(fields: [foodEntryId], references: [id])
+  allergies     Allergy[]     @relation("RecipeAllergies")
+
+  @@map("recipe")
+}
+
+model Ingredients {
+  id       String  @id @default(cuid())
+  name     String
+  quantity Float
+  calories Float
+  carbs    Float
+  fat      Float
+  recipeId String?
+  recipe   Recipe? @relation(fields: [recipeId], references: [id])
+
+  @@map("ingredients")
+}
+
+model metrics{
+  id       String  @id @default(cuid())
+  date     DateTime @default(now())
+  weight   Float?
+  height   Float?
+  bodyFat  Float?
+  userId   String
+  user     User    @relation(fields: [userId], references: [id])
+}
+
+model Allergy {
+  id      String   @id @default(cuid())
+  name    String   @unique
+  userId  String?
+  recipes Recipe[] @relation("RecipeAllergies")
+  users   User[]   @relation("UserAllergies")
+
+  @@map("allergy")
+}
+
+enum Gender {
+  MALE
+  FEMALE
+}
+
+enum ActivityLevel {
+  SEDENTARY
+  LIGHTLY_ACTIVE
+  MODERATELY_ACTIVE
+  VERY_ACTIVE
+}
+
+enum Goal {
+  LOSE_WEIGHT
+  MAINTAIN
+  GAIN_MUSCLE
+}
