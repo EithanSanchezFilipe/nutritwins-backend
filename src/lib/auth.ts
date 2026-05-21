@@ -23,9 +23,7 @@ const auth = (prisma: PrismaClient = new PrismaClient({ adapter })) =>
     }),
     trustedOrigins: [
       "nutritwins://",
-      ...(process.env.FRONTEND_URL ?? "")
-        .split(",")
-        .map(normalizeOrigin),
+      ...(process.env.FRONTEND_URL ?? "").split(",").map(normalizeOrigin),
       ...(process.env.BETTER_AUTH_TRUSTED_ORIGINS ?? "")
         .split(",")
         .map(normalizeOrigin),
