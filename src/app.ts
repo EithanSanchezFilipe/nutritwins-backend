@@ -25,11 +25,26 @@ export async function buildApp(): Promise<FastifyInstance> {
   app.setValidatorCompiler(validatorCompiler);
   app.setSerializerCompiler(serializerCompiler);
 
-  // Core plugins
+  const frontendUrls = (process.env.FRONTEND_URL ?? "http://localhost:5173")
+    .split(",")
+    .map((o) => o.trim())
+    .filter(Boolean);
+
+  app.log.info({ frontendUrls }, "Configured allowed CORS origins");
+
   await app.register(cors, {
-    origin: (process.env.FRONTEND_URL ?? "http://localhost:5173")
-      .split(",")
-      .map((o) => o.trim()),
+    origin: (origin, callback) => {
+      if (!origin) {
+        // Allow non-browser requests such as curl / server-side calls
+        return callback(null, true);
+      }
+
+      if (frontendUrls.includes(origin)) {
+        return callback(null, true);
+      }
+
+      callback(new Error(`Origin ${origin} is not allowed by CORS`));
+    },
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
   });
