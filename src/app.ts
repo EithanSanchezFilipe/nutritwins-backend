@@ -51,13 +51,13 @@ export async function buildApp(): Promise<FastifyInstance> {
     origin: (origin, callback) => {
       if (!origin) {
         // Allow non-browser requests such as curl / server-side calls
-        app.log.debug({ origin: null }, "CORS origin check: no origin");
+        app.log.info({ origin: null }, "CORS origin check: no origin");
         return callback(null, true);
       }
 
       const normalized = normalizeOrigin(origin);
       const allowed = frontendUrls.includes(normalized);
-      app.log.debug(
+      app.log.info(
         { origin, normalizedOrigin: normalized, allowed },
         "CORS origin check",
       );
@@ -66,6 +66,7 @@ export async function buildApp(): Promise<FastifyInstance> {
         return callback(null, true);
       }
 
+      app.log.info({ origin, normalizedOrigin: normalized, allowed }, "CORS origin blocked");
       callback(new Error(`Origin ${origin} is not allowed by CORS`), false);
     },
     credentials: true,
