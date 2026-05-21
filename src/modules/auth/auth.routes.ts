@@ -3,9 +3,13 @@ import "dotenv/config";
 
 export const authRoutes = async (fastify: FastifyInstance) => {
   fastify.route({
-    method: ["GET", "POST"],
+    method: ["GET", "POST", "OPTIONS"],
     url: "/api/auth/*",
     async handler(request, reply) {
+      if (request.method === "OPTIONS") {
+        return reply.status(204).send();
+      }
+
       try {
         // Construct request URL
         const url = new URL(request.url, `http://${request.headers.host}`);
