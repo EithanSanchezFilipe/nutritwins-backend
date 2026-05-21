@@ -27,12 +27,26 @@ export const authRoutes = async (fastify: FastifyInstance) => {
         });
         // Process authentication request
         const response = await fastify.auth.handler(req);
+
+        // Log response details for debugging
+        const bodyText = await response.text();
+        fastify.log.info(
+          {
+            url: request.url,
+            status: response.status,
+            bodyLength: bodyText.length,
+            body: bodyText.substring(0, 200),
+            headers: Object.fromEntries(response.headers),
+          },
+          "Auth response",
+        );
+
         // Forward response to client
         reply.status(response.status);
         response.headers.forEach((value: string, key: string) =>
           reply.header(key, value),
         );
-        reply.send(response.body ? await response.text() : null);
+        reply.send(bodyText || null);
       } catch (error: any) {
         fastify.log.error("Authentication Error:", error);
         reply.status(500).send({

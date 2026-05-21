@@ -66,7 +66,10 @@ export async function buildApp(): Promise<FastifyInstance> {
         return callback(null, true);
       }
 
-      app.log.info({ origin, normalizedOrigin: normalized, allowed }, "CORS origin blocked");
+      app.log.info(
+        { origin, normalizedOrigin: normalized, allowed },
+        "CORS origin blocked",
+      );
       callback(new Error(`Origin ${origin} is not allowed by CORS`), false);
     },
     credentials: true,

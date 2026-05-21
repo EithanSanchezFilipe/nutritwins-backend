@@ -12,6 +12,8 @@ const pool = new Pool({
 
 const adapter = new PrismaPg(pool);
 
+const normalizeOrigin = (origin: string) => origin.trim().replace(/\/+$/, "");
+
 const auth = (prisma: PrismaClient = new PrismaClient({ adapter })) =>
   betterAuth({
     secret: process.env.BETTER_AUTH_SECRET!,
@@ -21,11 +23,15 @@ const auth = (prisma: PrismaClient = new PrismaClient({ adapter })) =>
     }),
     trustedOrigins: [
       "nutritwins://",
+      ...(process.env.FRONTEND_URL ?? "")
+        .split(",")
+        .map(normalizeOrigin),
       ...(process.env.BETTER_AUTH_TRUSTED_ORIGINS ?? "")
         .split(",")
-        .map((o) => o.trim())
-        .filter(Boolean),
-    ],
+        .map(normalizeOrigin),
+    ]
+      .filter(Boolean)
+      .filter((value, index, self) => self.indexOf(value) === index),
     emailAndPassword: {
       enabled: true,
     },
