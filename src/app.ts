@@ -57,7 +57,10 @@ export async function buildApp(): Promise<FastifyInstance> {
 
       const normalized = normalizeOrigin(origin);
       const allowed = frontendUrls.includes(normalized);
-      app.log.debug({ origin, normalizedOrigin: normalized, allowed }, "CORS origin check");
+      app.log.debug(
+        { origin, normalizedOrigin: normalized, allowed },
+        "CORS origin check",
+      );
 
       if (allowed) {
         return callback(null, true);
