@@ -30,6 +30,18 @@ const auth = (prisma: PrismaClient = new PrismaClient({ adapter })) =>
     ]
       .filter(Boolean)
       .filter((value, index, self) => self.indexOf(value) === index),
+    session: {
+      expiresIn: 60 * 60 * 24 * 7, // 7 days
+      updateAge: 60 * 60 * 24, // update session every 24 hours
+      cookieCache: {
+        enabled: true,
+        maxAge: 5 * 60, // 5 minutes
+      },
+    },
+    advanced: {
+      useSecureCookies: process.env.NODE_ENV === "production",
+      disableCSRFCheck: false,
+    },
     emailAndPassword: {
       enabled: true,
     },
