@@ -25,10 +25,16 @@ export async function buildApp(): Promise<FastifyInstance> {
   app.setValidatorCompiler(validatorCompiler);
   app.setSerializerCompiler(serializerCompiler);
 
-  const frontendUrls = (process.env.FRONTEND_URL ?? "http://localhost:5173")
-    .split(",")
-    .map((o) => o.trim())
-    .filter(Boolean);
+  const frontendUrls = [
+    ...(process.env.FRONTEND_URL ?? "http://localhost:5173")
+      .split(",")
+      .map((o) => o.trim()),
+    ...(process.env.BETTER_AUTH_TRUSTED_ORIGINS ?? "")
+      .split(",")
+      .map((o) => o.trim()),
+  ]
+    .filter(Boolean)
+    .filter((value, index, self) => self.indexOf(value) === index);
 
   app.log.info({ frontendUrls }, "Configured allowed CORS origins");
 
