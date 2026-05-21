@@ -74,6 +74,13 @@ export async function buildApp(): Promise<FastifyInstance> {
     },
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: [
+      "Content-Type",
+      "Authorization",
+      "x-timezone-offset",
+      "x-app-language",
+    ],
+    exposedHeaders: ["Set-Cookie"],
   });
 
   // Register multipart before helmet to avoid content-type issues

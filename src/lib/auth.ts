@@ -43,6 +43,7 @@ const auth = (prisma: PrismaClient = new PrismaClient({ adapter })) =>
       disableCSRFCheck: false,
       sameSiteCookie: "none", // Allow cross-origin cookies (Vercel frontend + Render backend)
     },
+    cookiePrefix: "nutritwins",
     emailAndPassword: {
       enabled: true,
     },
