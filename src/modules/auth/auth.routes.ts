@@ -11,6 +11,13 @@ export const authRoutes = async (fastify: FastifyInstance) => {
       }
 
       try {
+        console.log(
+          "Auth request:",
+          request.url,
+          "Cookie:",
+          request.headers.cookie,
+        );
+
         // Construct request URL
         const url = new URL(request.url, `http://${request.headers.host}`);
 
@@ -30,15 +37,13 @@ export const authRoutes = async (fastify: FastifyInstance) => {
 
         // Log response details for debugging
         const bodyText = await response.text();
-        fastify.log.info(
-          {
-            url: request.url,
-            status: response.status,
-            bodyLength: bodyText.length,
-            body: bodyText.substring(0, 200),
-            headers: Object.fromEntries(response.headers),
-          },
-          "Auth response",
+        console.log(
+          "Auth response:",
+          request.url,
+          "Status:",
+          response.status,
+          "Body:",
+          bodyText,
         );
 
         // Forward response to client
