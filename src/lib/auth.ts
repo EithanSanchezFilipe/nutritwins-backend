@@ -39,7 +39,7 @@ const auth = (prisma: PrismaClient = new PrismaClient({ adapter })) =>
       },
     },
     advanced: {
-      useSecureCookies: process.env.NODE_ENV === "production",
+      useSecureCookies: true,
       disableCSRFCheck: false,
       sameSiteCookie: "none", // Allow cross-origin cookies (Vercel frontend + Render backend)
     },
