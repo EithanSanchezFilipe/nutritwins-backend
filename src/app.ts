@@ -25,27 +25,41 @@ export async function buildApp(): Promise<FastifyInstance> {
   app.setValidatorCompiler(validatorCompiler);
   app.setSerializerCompiler(serializerCompiler);
 
+  const normalizeOrigin = (origin: string) => origin.trim().replace(/\/+$/, "");
+
   const frontendUrls = [
     ...(process.env.FRONTEND_URL ?? "http://localhost:5173")
       .split(",")
-      .map((o) => o.trim()),
+      .map(normalizeOrigin),
     ...(process.env.BETTER_AUTH_TRUSTED_ORIGINS ?? "")
       .split(",")
-      .map((o) => o.trim()),
+      .map(normalizeOrigin),
   ]
     .filter(Boolean)
     .filter((value, index, self) => self.indexOf(value) === index);
 
-  app.log.info({ frontendUrls }, "Configured allowed CORS origins");
+  app.log.info(
+    {
+      rawFrontendUrl: process.env.FRONTEND_URL,
+      rawTrustedOrigins: process.env.BETTER_AUTH_TRUSTED_ORIGINS,
+      frontendUrls,
+    },
+    "Configured allowed CORS origins",
+  );
 
   await app.register(cors, {
     origin: (origin, callback) => {
       if (!origin) {
         // Allow non-browser requests such as curl / server-side calls
+        app.log.debug({ origin: null }, "CORS origin check: no origin");
         return callback(null, true);
       }
 
-      if (frontendUrls.includes(origin)) {
+      const normalized = normalizeOrigin(origin);
+      const allowed = frontendUrls.includes(normalized);
+      app.log.debug({ origin, normalizedOrigin: normalized, allowed }, "CORS origin check");
+
+      if (allowed) {
         return callback(null, true);
       }
 
